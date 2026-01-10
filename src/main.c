@@ -1,0 +1,45 @@
+#include <REGX51.H>
+#include "matrixled.h"
+#include "timer0.h"
+
+//这个是动画的数组，软件直接生成
+unsigned char Animation[]={
+0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0xFF,0x08,0x08,0x08,0xFF,0x00,0x0E,0x15,
+0x15,0x0C,0x00,0xFE,0x01,0x02,0x00,0xFE,
+0x01,0x02,0x00,0x0E,0x11,0x11,0x0E,0x00,
+0xFD,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+0x00
+};
+unsigned int g_ticks=0;
+unsigned char offset=0;
+
+void main()
+
+{
+	unsigned char i=0;
+	Timer0_Init();	   //定时器初始化
+	_74hc595_Init();   //避免上点闪烁
+	while(1)
+	{
+		for(i=0;i<8;i++)  //循环显示动画
+		{
+	 		MatrixLed_Show(i,Animation[i+offset]);	//+offset是为了移位，营造出移动的效果	
+		}
+	}
+}
+
+void Timer0_Rountine() interrupt 1
+{
+	TL0 = 0x66;				//设置定时初始值
+	TH0 = 0xFC;				//设置定时初始值
+	g_ticks++;
+	if(g_ticks>=100)
+	{
+		g_ticks=0;
+		offset++;			 
+		if(offset>34)		//因为动画长度在41，34加上for里的7，刚好没超过数组范围
+		offset=0;	
+	}
+
+}
