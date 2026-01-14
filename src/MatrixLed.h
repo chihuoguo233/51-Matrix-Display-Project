@@ -9,7 +9,10 @@ sbit SER=P3^4;
 
 
 void _74hc595_writebyte(unsigned char BYTE);
-void MatrixLed_Show(unsigned char Data,Column);
+void show_smile(void);
+void show_cry(void);
+void show_boring(void);
 void _74hc595_Init(void);
+void heartbeat(void);
 
 #endif
